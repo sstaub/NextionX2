@@ -179,6 +179,20 @@ void loop() {
   }
 ```
 
+#### command()
+```cpp
+void command(const char *cmd)
+```
+- **cmd** command string
+
+Send a raw command to the display
+
+**Example**
+
+```cpp
+nextion.command("cir 50,50,20,WHITE");
+```
+
 ### *Graphic Methods* for NextionComPort
 
 #### Graphic Enumarations for text objects
