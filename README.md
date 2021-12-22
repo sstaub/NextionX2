@@ -506,7 +506,7 @@ int32_t attributeValue(const char *attr)
 ```
 - ***attr** attribute as a string
 
-Returns the value of a component attribute
+Returns the value of a component attribute, 0xFFFFFFFF if there are problems
 
 **Example**
 
@@ -520,7 +520,7 @@ const char* attributeText(const char *attr)
 ```
 - ***attr** attribute as a string
 
-Returns the text of a component attribute
+Returns the text of a component attribute, "Error" if there are problems
 
 **Example**
 
@@ -535,7 +535,7 @@ int32_t value()
 ```
 - ***attr** attribute as a string
 
-Returns the value ("val") of a component
+Returns the value ("val") of a component, 0xFFFFFFFF if there are problems
 
 **Example**
 
@@ -549,7 +549,7 @@ const char* attributeText(const char *attr)
 ```
 - ***attr** attribute as a string
 
-Returns the text ("txt") of a component
+Returns the text ("txt") of a component, "Error" if there are problems
 
 **Example**
 
