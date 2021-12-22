@@ -92,55 +92,6 @@ void loop() {
 
 ## Documentation
 
-### Graphic Enumarations for text objects
-
-```cpp
-enum fill_t { // background fill modes
-	CROP,
-	SOLID,
-	IMAGE,
-	NONE
-};
-
-enum alignhor_t { // horizontal alignment
-	LEFT,
-	CENTER,
-	RIGHT
-};
-
-enum alignver_t { // vertical alignment
-	TOP,
-	MIDDLE,
-	BUTTON
-}
-```
-
-
-### Colors
-
-There are some colors predefined
-
-```cpp
-#define BLACK      0x0000
-#define BLUE       0x001F
-#define RED        0xF800
-#define GREEN      0x07E0
-#define CYAN       0x07FF
-#define MAGENTA    0xF81F
-#define YELLOW     0xFFE0
-#define LIGHT_GREY 0xBDF7
-#define GREY       0x8430
-#define DARK_GREY  0x4208
-#define WHITE      0xFFFF
-```
-
-There is also helper function to convert RGB 8bit values to the 16bit 565 format used by Nextion.
-
-```cpp
-uint16_t color565(uint8_t red, uint8_t green, uint8_t blue)
-```
-
-
 ### *Object Constructor* NextionComPort
 ```cpp
 NextionComPort
@@ -177,33 +128,40 @@ NextionComponent text(nextion, 0, 7);
 ```cpp
 void begin(nextionSeriaType &nextionSerial, uint16_t baud = 9600)
 ```
-- **& nextionSerial** pointer to Serial object you want to use
+- **&nextionSerial** pointer to Serial object you want to use
 - **baud** the baud rate, standard is 9600
 
 
-Method to initialize the communication 
+Method to initialize the communication<br>
+This must done in the Arduino ```setup()``` function
 
 **Example**
 
 ```cpp
-nextion.begin(softSerial); // for use with Softserial
-nextion.begin(Serial1); // for use with Serial1 e.g. Arduino MEGA
+void setup() {
+  nextion.begin(softSerial); // for use with Softserial
+  nextion.begin(Serial1); // for use with Serial1 e.g. Arduino MEGA
+  }
 ```
 
 #### debug()
 ```cpp
 void begin(nextionSeriaType &debugSerial, uint16_t baud = 9600)
 ```
-- **& debugSerial** pointer to Serial object you want to use
+- **&debugSerial** pointer to Serial object you want to use
 - **baud** the baud rate, standard is 9600
 
 
-Method to initialize the communication for debugging
+Method to initialize the communication for debugging<br>
+This must done in the Arduino ```setup()``` function
 
 **Example**
 
 ```cpp
-nextion.debug(Serial);
+void setup() {
+  nextion.begin(softSerial);
+  nextion.debug(Serial);
+  }
 ```
 
 #### update()
@@ -218,7 +176,370 @@ This must done in the Arduino ```loop()``` function
 ```cpp
 void loop() {
   nextion.update();
+  }
+```
+
+### *Graphic Methods* for NextionComPort
+
+#### Graphic Enumarations for text objects
+
+```cpp
+enum fill_t { // background fill modes
+	CROP,
+	SOLID,
+	IMAGE,
+	NONE
+};
+
+enum alignhor_t { // horizontal alignment
+	LEFT,
+	CENTER,
+	RIGHT
+};
+
+enum alignver_t { // vertical alignment
+	TOP,
+	MIDDLE,
+	BOTTOM
 }
 ```
 
 
+#### Colors
+
+There are some colors predefined
+
+```cpp
+#define BLACK      0x0000
+#define BLUE       0x001F
+#define RED        0xF800
+#define GREEN      0x07E0
+#define CYAN       0x07FF
+#define MAGENTA    0xF81F
+#define YELLOW     0xFFE0
+#define LIGHT_GREY 0xBDF7
+#define GREY       0x8430
+#define DARK_GREY  0x4208
+#define WHITE      0xFFFF
+```
+
+There is also helper function to convert RGB 8bit values to the 16bit 565 format used by Nextion.
+
+```cpp
+uint16_t color565(uint8_t red, uint8_t green, uint8_t blue)
+```
+
+#### cls()
+```cpp
+void cls(uint16_t color)
+```
+
+Clears the complete screen with a given color
+
+**Example**
+
+```cpp
+nextion.cls(BLACK);
+```
+
+#### line()
+```cpp
+void line(uint16_t x1, uint16_t y1, int16_t x2, uint16_t y2, uint16_t color)
+```
+- **x1** start point x1
+- **y1** start point y1
+- **x2** end point x2
+- **y1** end point y2
+- **color** color in 565 16bit format
+
+Draw a line
+
+**Example**
+
+```cpp
+nextion.line(50, 50, 100, 100, RED);
+```
+
+#### circle()
+```cpp
+void circle(uint16_t x, uint16_t y, uint16_t radius, uint16_t color)
+```
+- **x** center point x
+- **y** center point y
+- **radius** circle radius
+- **color** color in 565 16bit format
+
+Draw a circle
+
+**Example**
+
+```cpp
+nextion.circle(200, 200, 50, BLUE);
+```
+
+#### circleFilled()
+```cpp
+void circleFilled(uint16_t x, uint16_t y, uint16_t radius, uint16_t color)
+```
+- **x** center point x
+- **y** center point y
+- **radius** circle radius
+- **color** color in 565 16bit format
+
+Draw a filled circle
+
+**Example**
+
+```cpp
+nextion.circleFilled(200, 200, 50, BLUE);
+```
+
+#### rectangle()
+```cpp
+void rectangle(uint16_t x, uint16_t y, int16_t width, uint16_t height, uint16_t color)
+```
+- **x** start point x
+- **y** start point y
+- **width** rectangle width
+- **height** rectangle height
+- **color** color in 565 16bit format
+
+Draw a rectangle
+
+**Example**
+
+```cpp
+nextion.rectangle(50, 50, 150, 50, YELLOW);
+```
+
+#### rectangleFilled()
+```cpp
+void rectangleFilled(uint16_t x, uint16_t y, int16_t width, uint16_t height, uint16_t color)
+```
+- **x** start point x
+- **y** start point y
+- **width** rectangle width
+- **height** rectangle height
+- **color** color in 565 16bit format
+
+Draw a filled rectangle
+
+**Example**
+
+```cpp
+nextion.rectangleFilled(50, 50, 150, 50, YELLOW);
+```
+
+#### text()
+```cpp
+void text(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t font, uint16_t colorfg, uint16_t colorbg, alignhor_t alignx, alignver_t aligny, fill_t fillbg, const char* text)
+```
+- **x** start point x
+- **y** start point y
+- **width** text area width
+- **height** text area height
+- **font** resource font number
+- **colorfg** text foreground color in 565 16bit format
+- **colorbg** text background color in 565 16bit format
+- **alignx** text horizontal alignment LEFT / CENTER / RIGHT
+- **aligny** text horizontal alignment TOP / MIDDLE / BOTTOM
+- **fillbg** background fill mode CROP / SOLID / IMAGE / NONE
+- **text** text string
+
+Draw a filled rectangle
+
+**Example**
+
+```cpp
+nextion.text(50, 280, 200, 50, 1, WHITE, BLUE, CENTER, MIDDLE, SOLID, "Hello Nextion");
+```
+
+#### picture()
+```cpp
+void picture(uint16_t x, uint16_t y, uint8_t id)
+```
+- **x** upper left x coordinate
+- **y** upper left y coordinate
+- **id** resource picture id
+
+Draw a picture
+
+**Example**
+
+```cpp
+nextion.picture(320, 100, 0);
+```
+
+#### pictureCrop()
+```cpp
+void pictureCrop(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t id)
+```
+- **x** upper left x coordinate
+- **y** upper left y coordinate
+- **width** crop width
+- **height** crop height
+- **id** resource picture id
+
+Draw a croped picture, should only used with fullscreen picture!
+
+**Example**
+
+```cpp
+nextion.pictureCrop(100, 100, 50, 50, 0);
+```
+
+#### pictureCropX()
+```cpp
+void pictureCropX(uint16_t destx, uint16_t desty, uint16_t width, uint16_t height, uint16_t srcx, uint16_t srcy, uint8_t id)
+```
+- **destx** upper left x destination coordinate
+- **desty** upper left y destination coordinate
+- **width** crop width
+- **height** crop height
+- **srcx** upper left x source coordinate
+- **srcy** upper left y source coordinate
+- **id** resource picture id
+
+Draw an extended croped picture
+
+**Example**
+
+```cpp
+nextion.pictureCropX(320, 160, 50, 50, 0, 0, 0);
+```
+
+### *Methods* for NextionComponent
+
+#### touch()
+```cpp
+void touch(void (*onTouch)())
+```
+- ***onTouch** callback function
+
+Add a callback function for the touch event
+
+**Example**
+
+```cpp
+momentaryButton.touch(ledOn);
+```
+
+#### release()
+```cpp
+void release(void (*onRelease)())
+```
+- ***onTouch** callback function
+
+Add a callback function for the release event
+
+**Example**
+
+```cpp
+momentaryButton.release(ledOff);
+```
+
+#### attribute()
+```cpp
+void attribute(const char *attr, int32_t number)
+void attribute(const char *attr, const char *text)
+```
+- ***attr** attribute as a string
+- **number** argument value
+- ***text** argument text
+
+Set an attribute with a value or text
+
+**Example**
+
+```cpp
+number.attribute("val", 5);
+text.attribute("txt", "v.1.0.0");
+```
+
+#### value()
+```cpp
+void value(int32_t number)
+```
+- **number** argument value
+
+Set a value
+
+**Example**
+
+```cpp
+number.value(5);
+```
+
+#### text()
+```cpp
+void text(const char* txt)
+```
+- ***text** argument text
+
+Set a text
+
+**Example**
+
+```cpp
+text.text("hello");
+```
+
+### *Return Methods* for NextionComponent
+
+#### attributeValue()
+```cpp
+int32_t attributeValue(const char *attr)
+```
+- ***attr** attribute as a string
+
+Returns the value of a component attribute
+
+**Example**
+
+```cpp
+int32_t valueNumber = number.attributeValue("val");
+```
+
+#### attributeText()
+```cpp
+const char* attributeText(const char *attr)
+```
+- ***attr** attribute as a string
+
+Returns the text of a component attribute
+
+**Example**
+
+```cpp
+char string[32];
+strcpy(string, text.attributeValue("txt");
+```
+
+#### value()
+```cpp
+int32_t value()
+```
+- ***attr** attribute as a string
+
+Returns the value ("val") of a component
+
+**Example**
+
+```cpp
+int32_t valueNumber = number.value();
+```
+
+#### text()
+```cpp
+const char* attributeText(const char *attr)
+```
+- ***attr** attribute as a string
+
+Returns the text ("txt") of a component
+
+**Example**
+
+```cpp
+char string[32];
+strcpy(string, text.text();
+```
