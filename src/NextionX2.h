@@ -69,7 +69,7 @@ enum alignhor_t {
 enum alignver_t {
 	TOP,
 	MIDDLE,
-	BUTTON
+	BOTTOM
 };
 
 /**
@@ -111,14 +111,14 @@ class NextionComponent {
 		 * 
 		 * @param number 
 		 */
-		void attribute(const char *, int32_t number);
+		void attribute(const char *attr, int32_t number);
 
 		/**
 		 * @brief Set the Attr object
 		 * 
 		 * @param text 
 		 */
-		void attribute(const char *, const char *text);
+		void attribute(const char *attr, const char *text);
 
 		/**
 		 * @brief returns the guid
@@ -147,7 +147,7 @@ class NextionComponent {
 		 * @param attribute 
 		 * @return int32_t object atrribute value
 		 */
-		int32_t attributeValue(const char *attribute);
+		int32_t attributeValue(const char *attr);
 
 		/**
 		 * @brief get the text string of an object attribute
@@ -155,7 +155,7 @@ class NextionComponent {
 		 * @param attribute 
 		 * @return const char* object attribute text
 		 */
-		const char* attributeText(const char *attribute);
+		const char* attributeText(const char *attr);
 
 		/**
 		 * @brief get the value of the object
@@ -169,7 +169,7 @@ class NextionComponent {
 		 * 
 		 * @param number object value, 0xFFFFFFFF if not defined
 		 */
-		void value (int32_t number);
+		void value(int32_t number);
 
 		/**
 		 * @brief get the text of the object
@@ -229,7 +229,7 @@ class NextionComPort {
 		 * @param baud serial baudrate, default 9600
 		 */
 		template <class nextionSeriaType>
-		void begin(nextionSeriaType &, uint16_t baud = 9600);
+		void begin(nextionSeriaType &nextionSerial, uint16_t baud = 9600);
 
 		/**
 		 * @brief start a debug serial com port
@@ -238,7 +238,7 @@ class NextionComPort {
 		 * @param baud serial baudrate, default 9600
 		 */
 		template <class debugSerialType>
-		void debug(debugSerialType &, uint16_t baud = 9600);
+		void debug(debugSerialType &debugSerial, uint16_t baud = 9600);
 
 		/**
 		 * @brief send a command string
@@ -300,7 +300,7 @@ class NextionComPort {
 		 * @param height 
 		 * @param color 
 		 */
-		void rectangle(uint16_t x1, uint16_t y1, int16_t width, uint16_t height, uint16_t color);
+		void rectangle(uint16_t x, uint16_t y, int16_t width, uint16_t height, uint16_t color);
 
 		/**
 		 * @brief draw a filled rectangle
@@ -324,7 +324,7 @@ class NextionComPort {
 		 * @param colorfg foreground color
 		 * @param colorbg background color
 		 * @param alignx horizontal alignment LEFT, CENTER, RIGHT
-		 * @param aligny vertical alignment TOP, CENTER, BUTTON
+		 * @param aligny vertical alignment TOP, CENTER, BOTTOM
 		 * @param fillbg background fill mode CROP, SOLID, IMAGE, NONE
 		 * @param text string content
 		 */
@@ -433,7 +433,7 @@ void NextionComponent::release(void (*onRelease)() = nullptr) {
 	nexComm->addComponentList(this);
 	}
 
-int32_t NextionComponent::attributeValue(const char *attribute) {
+int32_t NextionComponent::attributeValue(const char *attr) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "get p[");
@@ -441,12 +441,12 @@ int32_t NextionComponent::attributeValue(const char *attribute) {
 	strcat(commandString, "].b[");
 	strcat(commandString, itoa(myId.object));
 	strcat(commandString, "].");
-	strcat(commandString, attribute);
+	strcat(commandString, attr);
 	nexComm->command(commandString);
 	return nexComm->nextionValue();
 	}
 
-const char* NextionComponent::attributeText(const char *attribute) {
+const char* NextionComponent::attributeText(const char *attr) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "get p[");
@@ -454,7 +454,7 @@ const char* NextionComponent::attributeText(const char *attribute) {
 	strcat(commandString, "].b[");
 	strcat(commandString, itoa(myId.object));
 	strcat(commandString, "].");
-	strcat(commandString, attribute);
+	strcat(commandString, attr);
 	nexComm->command(commandString);
 	return nexComm->nextionText();
 	}
