@@ -6,7 +6,7 @@
 #define MAX_BUFFER_LENGTH       14
 #define MAX_LIST_LENGTH         24
 #define ATTRIBUTE_TEXT_LENGTH	  48
-#define ATTRIBUTE_TEXT_LENGTH_X	64
+#define ATTRIBUTE_TEXT_LENGTH_X 64
 #define ATTRIBUTE_NUM_LENGTH    32
 #define ATTRIBUTE_NUM_LENGTH_X  48
 #define RECEIVE_STRING_LENGTH   32
@@ -58,19 +58,19 @@ enum fill_t {
 	SOLID,
 	IMAGE,
 	NONE
-};
+	};
 
 enum alignhor_t {
 	LEFT,
 	CENTER,
 	RIGHT
-};
+	};
 
 enum alignver_t {
 	TOP,
 	MIDDLE,
 	BOTTOM
-};
+	};
 
 /**
  * @brief Component Id declaration
@@ -478,12 +478,10 @@ void NextionComponent::text(const char* txt) {
 void NextionComponent::callback(uint8_t event) {
 	switch (event) {
 		case 0:
-			if (onRelease != nullptr)
-				onRelease();
+			if (onRelease != nullptr) onRelease();
 			break;
 		case 1:
-			if (onTouch != nullptr)
-				onTouch();
+			if (onTouch != nullptr) onTouch();
 			break;
 		}
 	}
@@ -494,8 +492,7 @@ NextionComPort::NextionComPort() {}
 template <class nextionSeriaType>
 void NextionComPort::begin(nextionSeriaType &nextionSerial, uint16_t baud) {
 	nextionSerial.begin(baud);
-	while (!nextionSerial)
-		;
+	while (!nextionSerial);
 	this->nextionSerial = &nextionSerial;
 	command("");
 	command("bkcmd=0");
@@ -504,8 +501,7 @@ void NextionComPort::begin(nextionSeriaType &nextionSerial, uint16_t baud) {
 template <class debugSerialType>
 void NextionComPort::debug(debugSerialType &debugSerial, uint16_t baud) {
 	debugSerial.begin(baud);
-	while (!debugSerial)
-		;
+	while (!debugSerial);
 	this->debugSerial = &debugSerial;
 	command("bkcmd=3");
 	}
@@ -524,14 +520,12 @@ void NextionComPort::command(const char *cmd) {
 void NextionComPort::update() {
 	componentId_t component;
 	length = readNextionReturn();
-	if ((length > 0) && (debugSerial != nullptr))
-		dbgLoop();
+	if ((length > 0) && (debugSerial != nullptr)) dbgLoop();
 	if ((length == 4) && (inputString[0] == 0x65)) {
 		component.page = inputString[1];
 		component.object = inputString[2];
 		uint8_t listpos = indexByGuid(component.guid);
-		if (listpos < MAX_LIST_LENGTH)
-			lastList[listpos].component->callback(inputString[3]);
+		if (listpos < MAX_LIST_LENGTH) lastList[listpos].component->callback(inputString[3]);
 		}
 	}
 
@@ -539,17 +533,14 @@ void NextionComPort::addComponentList(NextionComponent *component) {
 	listElement_t myComponent;
 	myComponent.component = component;
 	myComponent.guid = component->guid();
-	if (indexByGuid(myComponent.guid) == 0xFF) {
-		lastList[lastPointer++] = myComponent;
-		if (lastPointer >= MAX_LIST_LENGTH)
-			lastPointer = 0;
+	if (indexByGuid(myComponent.guid) == 0xFF) { lastList[lastPointer++] = myComponent;
+		if (lastPointer >= MAX_LIST_LENGTH) lastPointer = 0;
 		}
 	}
 
 void NextionComPort::dbgLoop() {
 	if ((length == 1) && ((inputString[0] < 0x25) || (inputString[0] > 0x85))) {
-		if (inputString[0] == 1)
-			debugSerial->write("Success\n");
+		if (inputString[0] == 1) debugSerial->write("Success\n");
 		else if (inputString[0] < 0x25) {
 			debugSerial->write("Error ");
 			debugSerial->println(inputString[0], HEX);
@@ -577,12 +568,10 @@ uint8_t NextionComPort::readNextionReturn() {
 	while (nextionSerial->available() && counterFF < 3) {
 		uint8_t inputByte = nextionSerial->read();
 		inputString[inputPointer++] = inputByte;
-		if (inputByte == 255)
-			counterFF++;
+		if (inputByte == 255) counterFF++;
 		else {
 			counterFF = 0;
-			if (inputPointer > (MAX_BUFFER_LENGTH - 3))
-				inputPointer = MAX_BUFFER_LENGTH - 3;
+			if (inputPointer > (MAX_BUFFER_LENGTH - 3)) inputPointer = MAX_BUFFER_LENGTH - 3;
 			}
 		}
 	if (counterFF == 3) {
@@ -603,7 +592,7 @@ int32_t NextionComPort::nextionValue() {
 	uint8_t inputByte = 0;
 	uint32_t  timer = millis();  
 	while (nextionSerial->available() < 8) {
-		if ((millis() - timer) > TIMEOUT){
+		if ((millis() - timer) > TIMEOUT) {
 			error = true;
 	 		break;
 			}
@@ -612,27 +601,21 @@ int32_t NextionComPort::nextionValue() {
 		inputByte = nextionSerial->read();
 		timer = millis();
 		while (inputByte != 0x71) {
-			if (nextionSerial->available()) {
-				inputByte = nextionSerial->read();
-				}
+			if (nextionSerial->available()) inputByte = nextionSerial->read();
 			if((millis() - timer) > TIMEOUT) {
 				error = true;
 				break;
 				}   
 			}
 		if (inputByte == 0x71) {
-			for (int i = 0; i < 4; i++) {
-				buffer[i] = nextionSerial->read();
-				}
+			for (int i = 0; i < 4; i++) buffer[i] = nextionSerial->read();
 			int endBytes = 0;
 			timer = millis();
 			while (endOfCommandFound == false) {
 				tempChar = nextionSerial->read();
 				if (tempChar == 0xFF) {
 					endBytes++ ;
-					if (endBytes == 3) {
-						endOfCommandFound = true;
-						}
+					if (endBytes == 3) endOfCommandFound = true;
 					}
 				else {
 					error = true;
@@ -654,9 +637,7 @@ int32_t NextionComPort::nextionValue() {
 		value <<= 8;
 		value |= buffer[0];
 		}
-	else {
-		error = true;
-		}
+	else error = true;
 	if (error) value = 0xFFFFFFFF;
 	return value;
 	}
@@ -679,9 +660,7 @@ const char* NextionComPort::nextionText() {
 		inputByte = nextionSerial->read();
 		timer = millis();
 		while (inputByte != 0x70) {
-			if (nextionSerial->available()) {
-				inputByte = nextionSerial->read();
-				}
+			if (nextionSerial->available()) inputByte = nextionSerial->read();
 			if((millis() - timer) > TIMEOUT) {
 				error = true;
 				break;
@@ -695,9 +674,7 @@ const char* NextionComPort::nextionText() {
 					tempChar = nextionSerial->read();
 					if (tempChar == 0xFF) {
 						endBytes++ ;
-						if (endBytes == 3) {
-							endOfCommandFound = true;
-							}
+						if (endBytes == 3) endOfCommandFound = true;
 						}
 					else {
 						char tempString[2];
@@ -750,7 +727,7 @@ void NextionComPort::line(uint16_t x1, uint16_t y1, int16_t x2, uint16_t y2, uin
 	strcat(commandString, ",");
 	strcat(commandString, itoa(color));
 	command(commandString);
-}
+	}
 
 void NextionComPort::rectangle(uint16_t x, uint16_t y, int16_t width, uint16_t height, uint16_t color) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
@@ -766,7 +743,7 @@ void NextionComPort::rectangle(uint16_t x, uint16_t y, int16_t width, uint16_t h
 	strcat(commandString, ",");
 	strcat(commandString, itoa(color));
 	command(commandString);
-}
+	}
 
 void NextionComPort::rectangleFilled(uint16_t x, uint16_t y, int16_t width, uint16_t height, uint16_t color) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
@@ -782,7 +759,7 @@ void NextionComPort::rectangleFilled(uint16_t x, uint16_t y, int16_t width, uint
 	strcat(commandString, ",");
 	strcat(commandString, itoa(color));
 	command(commandString);
-}
+	}
 
 void NextionComPort::circle(uint16_t x, uint16_t y, uint16_t radius, uint16_t color) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
@@ -840,7 +817,7 @@ void NextionComPort::text(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
 	strcat(commandString, text);
 	strcat(commandString, "\"");
 	command(commandString);
-}
+	}
 
 void NextionComPort::picture(uint16_t x, uint16_t y, uint8_t id) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
@@ -852,7 +829,7 @@ void NextionComPort::picture(uint16_t x, uint16_t y, uint8_t id) {
 	strcat(commandString, ",");
 	strcat(commandString, itoa(id));
 	command(commandString);
-}
+	}
 
 void NextionComPort::pictureCrop(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t id) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];

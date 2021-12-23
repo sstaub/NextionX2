@@ -97,7 +97,7 @@ void loop() {
 NextionComPort
 ```
 
-Creates a display object, this can used for multible displays
+Creates a display object, this can used for multiple displays
 
 **Example**
 
