@@ -492,7 +492,7 @@ NextionComPort::NextionComPort() {}
 template <class nextionSeriaType>
 void NextionComPort::begin(nextionSeriaType &nextionSerial, uint16_t baud) {
 	nextionSerial.begin(baud);
-	while (!nextionSerial);
+	delay(100);
 	this->nextionSerial = &nextionSerial;
 	command("");
 	command("bkcmd=0");
@@ -501,7 +501,7 @@ void NextionComPort::begin(nextionSeriaType &nextionSerial, uint16_t baud) {
 template <class debugSerialType>
 void NextionComPort::debug(debugSerialType &debugSerial, uint16_t baud) {
 	debugSerial.begin(baud);
-	while (!debugSerial);
+	delay(100);
 	this->debugSerial = &debugSerial;
 	command("bkcmd=3");
 	}
