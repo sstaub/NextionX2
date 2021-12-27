@@ -47,7 +47,7 @@ uint16_t color565(uint8_t red, uint8_t green, uint8_t blue) {
  * @param number 
  * @return const char* 
  */
-const char* itoa(int32_t number) {
+const char* i32toa(int32_t number) {
 	static char numstring[16];
 	sprintf(numstring, "%ld", number);
 	return numstring;
@@ -57,7 +57,7 @@ enum fill_t {
 	CROP,
 	SOLID,
 	IMAGE,
-	NONE
+	NOFILL
 	};
 
 enum alignhor_t {
@@ -325,7 +325,7 @@ class NextionComPort {
 		 * @param colorbg background color
 		 * @param alignx horizontal alignment LEFT, CENTER, RIGHT
 		 * @param aligny vertical alignment TOP, CENTER, BOTTOM
-		 * @param fillbg background fill mode CROP, SOLID, IMAGE, NONE
+		 * @param fillbg background fill mode CROP, SOLID, IMAGE, NOFILL
 		 * @param text string content
 		 */
 		void text(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t font, uint16_t colorfg, uint16_t colorbg, alignhor_t alignx, alignver_t aligny, fill_t fillbg, const char* text);
@@ -394,13 +394,13 @@ void NextionComponent::attribute(const char *attr, int32_t number) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "p[");
-	strcat(commandString, itoa(myId.page));
+	strcat(commandString, i32toa(myId.page));
 	strcat(commandString, "].b[");
-	strcat(commandString, itoa(myId.object));
+	strcat(commandString, i32toa(myId.object));
 	strcat(commandString, "].");
 	strcat(commandString, attr);
 	strcat(commandString, "=");
-	strcat(commandString, itoa(number));
+	strcat(commandString, i32toa(number));
 	nexComm->command(commandString);
 	}
 
@@ -408,9 +408,9 @@ void NextionComponent::attribute(const char *attr, const char *text) {
 	char commandString[ATTRIBUTE_TEXT_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "p[");
-	strcat(commandString, itoa(myId.page));
+	strcat(commandString, i32toa(myId.page));
 	strcat(commandString, "].b[");
-	strcat(commandString, itoa(myId.object));
+	strcat(commandString, i32toa(myId.object));
 	strcat(commandString, "].");
 	strcat(commandString, attr);
 	strcat(commandString, "=\"");
@@ -437,9 +437,9 @@ int32_t NextionComponent::attributeValue(const char *attr) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "get p[");
-	strcat(commandString, itoa(myId.page));
+	strcat(commandString, i32toa(myId.page));
 	strcat(commandString, "].b[");
-	strcat(commandString, itoa(myId.object));
+	strcat(commandString, i32toa(myId.object));
 	strcat(commandString, "].");
 	strcat(commandString, attr);
 	nexComm->command(commandString);
@@ -450,9 +450,9 @@ const char* NextionComponent::attributeText(const char *attr) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "get p[");
-	strcat(commandString, itoa(myId.page));
+	strcat(commandString, i32toa(myId.page));
 	strcat(commandString, "].b[");
-	strcat(commandString, itoa(myId.object));
+	strcat(commandString, i32toa(myId.object));
 	strcat(commandString, "].");
 	strcat(commandString, attr);
 	nexComm->command(commandString);
@@ -709,7 +709,7 @@ void NextionComPort::cls(uint16_t color) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "cls ");
-	strcat(commandString, itoa(color));
+	strcat(commandString, i32toa(color));
 	command(commandString);
 	}
 
@@ -717,15 +717,15 @@ void NextionComPort::line(uint16_t x1, uint16_t y1, int16_t x2, uint16_t y2, uin
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "line ");
-	strcat(commandString, itoa(x1));
+	strcat(commandString, i32toa(x1));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y1));
+	strcat(commandString, i32toa(y1));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(x2));
+	strcat(commandString, i32toa(x2));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y2));
+	strcat(commandString, i32toa(y2));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(color));
+	strcat(commandString, i32toa(color));
 	command(commandString);
 	}
 
@@ -733,15 +733,15 @@ void NextionComPort::rectangle(uint16_t x, uint16_t y, int16_t width, uint16_t h
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "draw ");
-	strcat(commandString, itoa(x));
+	strcat(commandString, i32toa(x));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y));
+	strcat(commandString, i32toa(y));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(x + width));
+	strcat(commandString, i32toa(x + width));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y + height));
+	strcat(commandString, i32toa(y + height));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(color));
+	strcat(commandString, i32toa(color));
 	command(commandString);
 	}
 
@@ -749,15 +749,15 @@ void NextionComPort::rectangleFilled(uint16_t x, uint16_t y, int16_t width, uint
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "fill ");
-	strcat(commandString, itoa(x));
+	strcat(commandString, i32toa(x));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y));
+	strcat(commandString, i32toa(y));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(width));
+	strcat(commandString, i32toa(width));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(height));
+	strcat(commandString, i32toa(height));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(color));
+	strcat(commandString, i32toa(color));
 	command(commandString);
 	}
 
@@ -765,13 +765,13 @@ void NextionComPort::circle(uint16_t x, uint16_t y, uint16_t radius, uint16_t co
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "cir ");
-	strcat(commandString, itoa(x));
+	strcat(commandString, i32toa(x));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y));
+	strcat(commandString, i32toa(y));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(radius));
+	strcat(commandString, i32toa(radius));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(color));
+	strcat(commandString, i32toa(color));
 	command(commandString);
 	}
 
@@ -779,13 +779,13 @@ void NextionComPort::circleFilled(uint16_t x, uint16_t y, uint16_t radius, uint1
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "cirs ");
-	strcat(commandString, itoa(x));
+	strcat(commandString, i32toa(x));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y));
+	strcat(commandString, i32toa(y));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(radius));
+	strcat(commandString, i32toa(radius));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(color));
+	strcat(commandString, i32toa(color));
 	command(commandString);
 	}
 
@@ -793,25 +793,25 @@ void NextionComPort::text(uint16_t x, uint16_t y, uint16_t width, uint16_t heigh
 	char commandString[ATTRIBUTE_TEXT_LENGTH_X];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "xstr ");
-	strcat(commandString, itoa(x));
+	strcat(commandString, i32toa(x));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y));
+	strcat(commandString, i32toa(y));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(width));
+	strcat(commandString, i32toa(width));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(height));
+	strcat(commandString, i32toa(height));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(font));
+	strcat(commandString, i32toa(font));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(colorfg));
+	strcat(commandString, i32toa(colorfg));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(colorbg));
+	strcat(commandString, i32toa(colorbg));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(alignx));
+	strcat(commandString, i32toa(alignx));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(aligny));
+	strcat(commandString, i32toa(aligny));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(fillbg));
+	strcat(commandString, i32toa(fillbg));
 	strcat(commandString, ",");
 	strcat(commandString, "\"");
 	strcat(commandString, text);
@@ -823,11 +823,11 @@ void NextionComPort::picture(uint16_t x, uint16_t y, uint8_t id) {
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "pic ");
-	strcat(commandString, itoa(x));
+	strcat(commandString, i32toa(x));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y));
+	strcat(commandString, i32toa(y));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(id));
+	strcat(commandString, i32toa(id));
 	command(commandString);
 	}
 
@@ -835,15 +835,15 @@ void NextionComPort::pictureCrop(uint16_t x, uint16_t y, uint16_t width, uint16_
 	char commandString[ATTRIBUTE_NUM_LENGTH];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "picq ");
-	strcat(commandString, itoa(x));
+	strcat(commandString, i32toa(x));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(y));
+	strcat(commandString, i32toa(y));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(width));
+	strcat(commandString, i32toa(width));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(height));
+	strcat(commandString, i32toa(height));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(id));
+	strcat(commandString, i32toa(id));
 	command(commandString);
 	}
 
@@ -851,19 +851,19 @@ void NextionComPort::pictureCropX(uint16_t destx, uint16_t desty, uint16_t width
 	char commandString[ATTRIBUTE_NUM_LENGTH_X];
 	memset(commandString, 0, sizeof(commandString));
 	strcat(commandString, "xpic ");
-	strcat(commandString, itoa(destx));
+	strcat(commandString, i32toa(destx));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(desty));
+	strcat(commandString, i32toa(desty));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(width));
+	strcat(commandString, i32toa(width));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(height));
+	strcat(commandString, i32toa(height));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(srcx));
+	strcat(commandString, i32toa(srcx));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(srcy));
+	strcat(commandString, i32toa(srcy));
 	strcat(commandString, ",");
-	strcat(commandString, itoa(id));
+	strcat(commandString, i32toa(id));
 	command(commandString);
 	}
 
