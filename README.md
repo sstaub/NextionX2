@@ -202,7 +202,7 @@ enum fill_t { // background fill modes
 	CROP,
 	SOLID,
 	IMAGE,
-	NONE
+	NOFILL
 };
 
 enum alignhor_t { // horizontal alignment
