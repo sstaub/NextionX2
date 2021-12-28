@@ -1,5 +1,5 @@
 # NextionX2
-A new, alternative and universal library to interact with Nextion HMI displays from Arduino and compatible MCUs. The library is mainly based on Thierry's [NextionX](https://github.com/ITEAD-Thierry/NextionX) library and the [EasyNextionLibrary](https://github.com/Seithan/EasyNextionLibrary) from Seithan (return handling).
+A new, alternative and universal library to interact with Nextion HMI displays from Arduino and compatible MCUs. The library is mainly based on Thierry's [NextionX](https://github.com/ITEAD-Thierry/NextionX) library and the [EasyNextionLibrary](https://github.com/Seithan/EasyNextionLibrary) from Seithan (return methods).
 
 ## General information
 To be most universal, this library allows (in opposite to the official library) the use of multiple Nextion HMI displays connected to the same MCU under the condition to have enough hardware or software emulated serial ports (UARTs). 
@@ -16,7 +16,7 @@ In examples you will find a NextionX2.hmi file. This file file was created for a
 ![NextionX2 .hmi file](https://github.com/sstaub/NextionX2/blob/main/images/NextionX2.png?raw=true)
 NextionX2 HMI demo file
 
-The Nextionx2.ino shows the advantages of the library. The example use the SiftwareSerial libray, so the example runs on an Arduino UNO.
+The Nextionx2.ino shows the advantages of the library. The example use the SoftwareSerial libray, so the example can run on an Arduino UNO.
 
 ```cpp
 #include "Arduino.h"
@@ -90,9 +90,9 @@ void loop() {
 
 ```
 
-## Documentation
+# Documentation
 
-### *Object Constructor* NextionComPort
+## Object Constructor *NextionComPort*
 ```cpp
 NextionComPort
 ```
@@ -105,7 +105,7 @@ Creates a display object, this can used for multiple displays
 NextionComPort nextion;
 ```
 
-### *Object Constructor* NextionComponent
+## Object Constructor *NextionComponent*
 
 ```cpp
 NextionComponent(NexComm_t &nexComm, uint8_t pageId, uint8_t objectId)
@@ -122,9 +122,9 @@ Creates a component object
 NextionComponent text(nextion, 0, 7);
 ```
 
-### *Methods* for NextionComPort
+## Methods for *NextionComPort*
 
-#### begin()
+### begin()
 ```cpp
 void begin(nextionSeriaType &nextionSerial, uint16_t baud = 9600)
 ```
@@ -144,7 +144,7 @@ void setup() {
   }
 ```
 
-#### debug()
+### debug()
 ```cpp
 void begin(nextionSeriaType &debugSerial, uint16_t baud = 9600)
 ```
@@ -152,7 +152,7 @@ void begin(nextionSeriaType &debugSerial, uint16_t baud = 9600)
 - **baud** the baud rate, standard is 9600
 
 
-Method to initialize the communication for debugging<br>
+Method to initialize the communication for simple debugging<br>
 This must done in the Arduino ```setup()``` function
 
 **Example**
@@ -164,7 +164,7 @@ void setup() {
   }
 ```
 
-#### update()
+### update()
 ```cpp
 void update()
 ```
@@ -179,7 +179,7 @@ void loop() {
   }
 ```
 
-#### command()
+### command()
 ```cpp
 void command(const char *cmd)
 ```
@@ -193,9 +193,145 @@ Send a raw command to the display
 nextion.command("cir 50,50,20,WHITE");
 ```
 
-### *Graphic Methods* for NextionComPort
+## Methods for *NextionComponent*
 
-#### Graphic Enumarations for text objects
+### touch()
+```cpp
+void touch(void (*onTouch)())
+```
+- ***onTouch** callback function
+
+Add a callback function for the touch event
+
+**Example**
+
+```cpp
+momentaryButton.touch(ledOn);
+```
+
+### release()
+```cpp
+void release(void (*onRelease)())
+```
+- ***onTouch** callback function
+
+Add a callback function for the release event
+
+**Example**
+
+```cpp
+momentaryButton.release(ledOff);
+```
+
+### attribute()
+```cpp
+void attribute(const char *attr, int32_t number)
+void attribute(const char *attr, const char *text)
+```
+- **attr** attribute as a string
+- **number** argument value
+- **text** argument text
+
+Set an attribute with a value or text
+
+**Example**
+
+```cpp
+number.attribute("val", 5);
+text.attribute("txt", "v.1.0.0");
+```
+
+### value()
+```cpp
+void value(int32_t number)
+```
+- **number** argument value
+
+Set a value
+
+**Example**
+
+```cpp
+number.value(5);
+```
+
+### text()
+```cpp
+void text(const char* txt)
+```
+- **text** argument text
+
+Set a text
+
+**Example**
+
+```cpp
+text.text("hello");
+```
+
+## Return Methods for *NextionComponent*
+
+### attributeValue()
+```cpp
+int32_t attributeValue(const char *attr)
+```
+- **attr** attribute as a string
+
+Returns the value of a component attribute, 0xFFFFFFFF if there are problems
+
+**Example**
+
+```cpp
+int32_t valueNumber = number.attributeValue("val");
+```
+
+### attributeText()
+```cpp
+const char* attributeText(const char *attr)
+```
+- **attr** attribute as a string
+
+Returns the text of a component attribute, "Error" if there are problems
+
+**Example**
+
+```cpp
+char string[32];
+strcpy(string, text.attributeValue("txt");
+```
+
+### value()
+```cpp
+int32_t value()
+```
+- **attr** attribute as a string
+
+Returns the value ("val") of a component, 0xFFFFFFFF if there are problems
+
+**Example**
+
+```cpp
+int32_t valueNumber = number.value();
+```
+
+### text()
+```cpp
+const char* attributeText(const char *attr)
+```
+- **attr** attribute as a string
+
+Returns the text ("txt") of a component, "Error" if there are problems
+
+**Example**
+
+```cpp
+char string[32];
+strcpy(string, text.text();
+```
+
+## Graphic Methods for *NextionComPort*
+
+### Graphic Enumarations for text objects
 
 ```cpp
 enum fill_t { // background fill modes
@@ -219,7 +355,7 @@ enum alignver_t { // vertical alignment
 ```
 
 
-#### Colors
+### Colors
 
 There are some colors predefined
 
@@ -243,7 +379,7 @@ There is also helper function to convert RGB 8bit values to the 16bit 565 format
 uint16_t color565(uint8_t red, uint8_t green, uint8_t blue)
 ```
 
-#### cls()
+### cls()
 ```cpp
 void cls(uint16_t color)
 ```
@@ -256,7 +392,7 @@ Clears the complete screen with a given color
 nextion.cls(BLACK);
 ```
 
-#### line()
+### line()
 ```cpp
 void line(uint16_t x1, uint16_t y1, int16_t x2, uint16_t y2, uint16_t color)
 ```
@@ -274,7 +410,7 @@ Draw a line
 nextion.line(50, 50, 100, 100, RED);
 ```
 
-#### circle()
+### circle()
 ```cpp
 void circle(uint16_t x, uint16_t y, uint16_t radius, uint16_t color)
 ```
@@ -291,7 +427,7 @@ Draw a circle
 nextion.circle(200, 200, 50, BLUE);
 ```
 
-#### circleFilled()
+### circleFilled()
 ```cpp
 void circleFilled(uint16_t x, uint16_t y, uint16_t radius, uint16_t color)
 ```
@@ -308,7 +444,7 @@ Draw a filled circle
 nextion.circleFilled(200, 200, 50, BLUE);
 ```
 
-#### rectangle()
+### rectangle()
 ```cpp
 void rectangle(uint16_t x, uint16_t y, int16_t width, uint16_t height, uint16_t color)
 ```
@@ -326,7 +462,7 @@ Draw a rectangle
 nextion.rectangle(50, 50, 150, 50, YELLOW);
 ```
 
-#### rectangleFilled()
+### rectangleFilled()
 ```cpp
 void rectangleFilled(uint16_t x, uint16_t y, int16_t width, uint16_t height, uint16_t color)
 ```
@@ -344,7 +480,7 @@ Draw a filled rectangle
 nextion.rectangleFilled(50, 50, 150, 50, YELLOW);
 ```
 
-#### text()
+### text()
 ```cpp
 void text(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t font, uint16_t colorfg, uint16_t colorbg, alignhor_t alignx, alignver_t aligny, fill_t fillbg, const char* text)
 ```
@@ -368,7 +504,7 @@ Draw a filled rectangle
 nextion.text(50, 280, 200, 50, 1, WHITE, BLUE, CENTER, MIDDLE, SOLID, "Hello Nextion");
 ```
 
-#### picture()
+### picture()
 ```cpp
 void picture(uint16_t x, uint16_t y, uint8_t id)
 ```
@@ -384,7 +520,7 @@ Draw a picture
 nextion.picture(320, 100, 0);
 ```
 
-#### pictureCrop()
+### pictureCrop()
 ```cpp
 void pictureCrop(uint16_t x, uint16_t y, uint16_t width, uint16_t height, uint8_t id)
 ```
@@ -402,7 +538,7 @@ Draw a croped picture, should only used with fullscreen picture!
 nextion.pictureCrop(100, 100, 50, 50, 0);
 ```
 
-#### pictureCropX()
+### pictureCropX()
 ```cpp
 void pictureCropX(uint16_t destx, uint16_t desty, uint16_t width, uint16_t height, uint16_t srcx, uint16_t srcy, uint8_t id)
 ```
@@ -420,140 +556,4 @@ Draw an extended croped picture
 
 ```cpp
 nextion.pictureCropX(320, 160, 50, 50, 0, 0, 0);
-```
-
-### *Methods* for NextionComponent
-
-#### touch()
-```cpp
-void touch(void (*onTouch)())
-```
-- ***onTouch** callback function
-
-Add a callback function for the touch event
-
-**Example**
-
-```cpp
-momentaryButton.touch(ledOn);
-```
-
-#### release()
-```cpp
-void release(void (*onRelease)())
-```
-- ***onTouch** callback function
-
-Add a callback function for the release event
-
-**Example**
-
-```cpp
-momentaryButton.release(ledOff);
-```
-
-#### attribute()
-```cpp
-void attribute(const char *attr, int32_t number)
-void attribute(const char *attr, const char *text)
-```
-- ***attr** attribute as a string
-- **number** argument value
-- ***text** argument text
-
-Set an attribute with a value or text
-
-**Example**
-
-```cpp
-number.attribute("val", 5);
-text.attribute("txt", "v.1.0.0");
-```
-
-#### value()
-```cpp
-void value(int32_t number)
-```
-- **number** argument value
-
-Set a value
-
-**Example**
-
-```cpp
-number.value(5);
-```
-
-#### text()
-```cpp
-void text(const char* txt)
-```
-- ***text** argument text
-
-Set a text
-
-**Example**
-
-```cpp
-text.text("hello");
-```
-
-### *Return Methods* for NextionComponent
-
-#### attributeValue()
-```cpp
-int32_t attributeValue(const char *attr)
-```
-- ***attr** attribute as a string
-
-Returns the value of a component attribute, 0xFFFFFFFF if there are problems
-
-**Example**
-
-```cpp
-int32_t valueNumber = number.attributeValue("val");
-```
-
-#### attributeText()
-```cpp
-const char* attributeText(const char *attr)
-```
-- ***attr** attribute as a string
-
-Returns the text of a component attribute, "Error" if there are problems
-
-**Example**
-
-```cpp
-char string[32];
-strcpy(string, text.attributeValue("txt");
-```
-
-#### value()
-```cpp
-int32_t value()
-```
-- ***attr** attribute as a string
-
-Returns the value ("val") of a component, 0xFFFFFFFF if there are problems
-
-**Example**
-
-```cpp
-int32_t valueNumber = number.value();
-```
-
-#### text()
-```cpp
-const char* attributeText(const char *attr)
-```
-- ***attr** attribute as a string
-
-Returns the text ("txt") of a component, "Error" if there are problems
-
-**Example**
-
-```cpp
-char string[32];
-strcpy(string, text.text();
 ```
