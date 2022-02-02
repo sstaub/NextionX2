@@ -304,7 +304,6 @@ strcpy(string, text.attributeValue("txt");
 ```cpp
 int32_t value()
 ```
-- **attr** attribute as a string
 
 Returns the value ("val") of a component, 0xFFFFFFFF if there are problems
 
@@ -316,9 +315,8 @@ int32_t valueNumber = number.value();
 
 ### text()
 ```cpp
-const char* attributeText(const char *attr)
+const char* text()
 ```
-- **attr** attribute as a string
 
 Returns the text ("txt") of a component, "Error" if there are problems
 
