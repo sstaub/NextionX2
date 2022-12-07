@@ -261,6 +261,22 @@ class NextionComPort {
 		void cls(uint16_t color);
 
 		/**
+		 * @brief return currentPage
+		 *
+		 * add printh 0x24 pageID FF FF FF to preinit event
+		 * pageID in hex 
+		 * 
+		 */
+
+		uint8_t getCurrentPageID();
+
+		/**
+		 * @brief return lastPage
+		 *  
+		 */
+		uint8_t getLastPageID();
+
+		/**
 		 * @brief draw a line
 		 * 
 		 * @param x1 
@@ -379,6 +395,8 @@ class NextionComPort {
 		uint8_t inputPointer = 0;
 		uint8_t counterFF = 0;
 		uint8_t lastPointer = 0;
+		uint8_t currentPageID;
+		uint8_t lastPageID;
 		listElement_t lastList[MAX_LIST_LENGTH];
 
 		friend NextionComponent;
@@ -527,6 +545,10 @@ void NextionComPort::update() {
 		uint8_t listpos = indexByGuid(component.guid);
 		if (listpos < MAX_LIST_LENGTH) lastList[listpos].component->callback(inputString[3]);
 		}
+	else if ((length == 2) && (inputString[0] == 0x24)) {
+			lastPageID = currentPageID;
+			currentPageID = inputString[1];
+		}
 	}
 
 void NextionComPort::addComponentList(NextionComponent *component) {
@@ -537,6 +559,16 @@ void NextionComPort::addComponentList(NextionComponent *component) {
 		if (lastPointer >= MAX_LIST_LENGTH) lastPointer = 0;
 		}
 	}
+
+uint8_t NextionComPort::getCurrentPageID()
+{
+	return currentPageID;
+}
+
+uint8_t NextionComPort::getLastPageID()
+{
+	return lastPageID;
+}
 
 void NextionComPort::dbgLoop() {
 	if ((length == 1) && ((inputString[0] < 0x25) || (inputString[0] > 0x85))) {
@@ -560,6 +592,10 @@ void NextionComPort::dbgLoop() {
 		debugSerial->write(" object ");
 		debugSerial->println(inputString[2], DEC);
 		debugSerial->println();
+		}
+	else if ((length == 2) && (inputString[0] == 0x24)) {
+		debugSerial->write(" currentPageID ");
+		debugSerial->println(inputString[1], DEC);
 		}
 	}
 
