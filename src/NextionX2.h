@@ -229,7 +229,7 @@ class NextionComPort {
 		 * @param baud serial baudrate, default 9600
 		 */
 		template <class nextionSeriaType>
-		void begin(nextionSeriaType &nextionSerial, uint16_t baud = 9600);
+		void begin(nextionSeriaType &nextionSerial, uint32_t baud = 9600);
 
 		/**
 		 * @brief start a debug serial com port
@@ -238,7 +238,7 @@ class NextionComPort {
 		 * @param baud serial baudrate, default 9600
 		 */
 		template <class debugSerialType>
-		void debug(debugSerialType &debugSerial, uint16_t baud = 9600);
+		void debug(debugSerialType &debugSerial, uint32_t baud = 9600);
 
 		/**
 		 * @brief send a command string
@@ -490,7 +490,7 @@ void NextionComponent::callback(uint8_t event) {
 NextionComPort::NextionComPort() {}
 
 template <class nextionSeriaType>
-void NextionComPort::begin(nextionSeriaType &nextionSerial, uint16_t baud) {
+void NextionComPort::begin(nextionSeriaType &nextionSerial, uint32_t baud) {
 	nextionSerial.begin(baud);
 	delay(100);
 	this->nextionSerial = &nextionSerial;
@@ -499,7 +499,7 @@ void NextionComPort::begin(nextionSeriaType &nextionSerial, uint16_t baud) {
 	}
 
 template <class debugSerialType>
-void NextionComPort::debug(debugSerialType &debugSerial, uint16_t baud) {
+void NextionComPort::debug(debugSerialType &debugSerial, uint32_t baud) {
 	debugSerial.begin(baud);
 	delay(100);
 	this->debugSerial = &debugSerial;
